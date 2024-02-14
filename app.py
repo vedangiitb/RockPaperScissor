@@ -2,7 +2,6 @@ from flask import Flask, request, jsonify
 import numpy as np
 from PIL import Image
 import io
-import base64
 import tensorflow as tf
 import io
 
