@@ -39,6 +39,8 @@ def upload_image():
 @app.route('/',methods=['GET'])
 def sayHi():
     print("HELLO")
+    print("HEY")
 
 if __name__ == '__main__':
     app.run()
+  
