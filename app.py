@@ -3,44 +3,27 @@ import numpy as np
 from PIL import Image
 import io
 import tensorflow as tf
-import io
-
+import os
+from datetime import datetime
 
 app = Flask(__name__)
 
-# Load the pre-trained machine learning model
-model = tf.keras.models.load_model('image_classification_model.h5')
-
-class_labels = ['paper', 'rock', 'scissor']
-
 @app.route('/upload', methods=['POST'])
-def upload_image():
-    try:
-        # Receive image data from the request
-        image_data = request.data
+def upload_data():
+    if request.method == 'POST' and request.headers['Content-Type'] == 'application/json':
+        try:
+            data = request.get_json()
+            time = data.get('time')
+            temp = data.get('temperature')
+            humidity = data.get('humidity')
 
-        img = Image.open(io.BytesIO(image_data))
-
-        img = img.resize((128, 128))  # Resize the image to match model input size
-        img_array = np.array(img) / 255.0  # Normalize pixel values
-
-        # Make prediction using the model
-        predictions = model.predict(np.expand_dims(img_array, axis=0))
-
-        # Get the predicted class label
-        predicted_class_index = np.argmax(predictions)
-        predicted_class = class_labels[predicted_class_index]
-
-        # Return the predicted class label
-        return jsonify({'prediction': predicted_class}), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-@app.route('/',methods=['GET'])
-def sayHi():
-    print("HELLO")
-    print("HEY")
+            print(time,temp,humidity)
+            
+            return jsonify({"message": "Data received", "time": time, "temperature": temp, "humidity": humidity})
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500  # Generic server error
+    else:
+        return "Invalid data format", 400  # Bad request error
 
 if __name__ == '__main__':
     app.run()
-  
